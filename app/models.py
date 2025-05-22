@@ -1,29 +1,30 @@
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Text, DateTime
+from sqlalchemy.orm import relationship
+from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
-from sqlalchemy import Integer, String, Boolean, ForeignKey, DateTime
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from .database import Base
+
+Base = declarative_base()
 
 class TodoList(Base):
     __tablename__ = "todolists"
 
-    id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    title: Mapped[str] = mapped_column(String(100))
-    deleted_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
-    completed_count: Mapped[int] = mapped_column(Integer, default=0)
-    total_count: Mapped[int] = mapped_column(Integer, default=0)
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, nullable=False)
+    deleted_at = Column(DateTime, nullable=True)
+    completed_count = Column(Integer, default=0)
+    total_count = Column(Integer, default=0)
 
-    items: Mapped[list["Item"]] = relationship(
-        back_populates="todolist", cascade="all, delete-orphan"
-    )
+    items = relationship("Item", back_populates="todolist")
+
 
 class Item(Base):
     __tablename__ = "items"
 
-    id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    title: Mapped[str] = mapped_column(String(100))
-    description: Mapped[str] = mapped_column(String(250))
-    done: Mapped[bool] = mapped_column(Boolean, default=False)
-    deleted_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, nullable=False)
+    content = Column(Text, nullable=True)
+    done = Column(Boolean, default=False)
+    deleted_at = Column(DateTime, nullable=True)
 
-    todolist_id: Mapped[int] = mapped_column(ForeignKey("todolists.id"))
-    todolist: Mapped["TodoList"] = relationship(back_populates="items")
+    todolist_id = Column(Integer, ForeignKey("todolists.id"))
+    todolist = relationship("TodoList", back_populates="items")

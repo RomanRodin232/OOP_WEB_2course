@@ -1,13 +1,21 @@
 from fastapi import FastAPI
-from .database import engine, Base
-from .routers import todolist, item
+from dotenv import load_dotenv
+from app.database import engine
+from app.models import Base
+from app.api import todolist  # Импортируем маршруты
 
-app = FastAPI()
+load_dotenv()  # Загружаем переменные окружения из .env
 
+app = FastAPI(
+    title="TodoList CQRS API",
+    version="1.0.0"
+)
+
+# Подключаем маршруты
 app.include_router(todolist.router)
-app.include_router(item.router)
 
+# Создание таблиц (опционально, если не используешь Alembic)
 @app.on_event("startup")
-async def startup():
+async def on_startup():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
