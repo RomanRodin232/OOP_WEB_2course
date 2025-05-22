@@ -6,8 +6,7 @@ class ItemBase(BaseModel):
     description: str
     done: bool = False
 
-class ItemCreate(ItemBase):
-    pass
+class ItemCreate(ItemBase): pass
 
 class ItemUpdate(BaseModel):
     title: Optional[str] = None
@@ -24,8 +23,7 @@ class ItemRead(ItemBase):
 class TodoListBase(BaseModel):
     title: str
 
-class TodoListCreate(TodoListBase):
-    pass
+class TodoListCreate(TodoListBase): pass
 
 class TodoListUpdate(BaseModel):
     title: Optional[str] = None
@@ -33,6 +31,9 @@ class TodoListUpdate(BaseModel):
 class TodoListRead(TodoListBase):
     id: int
     items: List[ItemRead] = []
+    completed_count: int
+    total_count: int
+    progress: float
 
     class Config:
         orm_mode = True
